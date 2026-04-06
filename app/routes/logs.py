@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 import json
 import os
@@ -7,38 +7,32 @@ import os
 import hashlib
 
 from flask import Blueprint, jsonify, request, render_template
+from flask import session, redirect
+from flask_login import login_required
 
 from functools import wraps
-from flask import session, redirect
 from collections import deque
 
-def admin_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if not session.get("admin"):
-            return redirect("/admin/auth")
-        return f(*args, **kwargs)
-    return wrapper
+from app.logging_config import LOG_DIR
 
 logs_bp = Blueprint("logs", __name__)
 
-
-LOGGING_DIR = "./app/logging/"
-
-LOG_FILE = LOGGING_DIR + "logs/app.log"
-PASS_FILE = LOGGING_DIR + "auth/creds.txt"
+LOG_FILE = "app.log"
 
 @logs_bp.route("/logs")
-@admin_required
+@login_required
 def get_logs():
-    if not os.path.exists(LOG_FILE):
+    log_file = LOG_DIR / LOG_FILE
+    if not log_file.exists():
+        logger.debug("Attempter to find log file, but couldnt",
+                     extra={"file_path:": log_file})
         return jsonify({"error": "Log file not found"}), 404
 
     level = request.args.get("level")
     search = request.args.get("search")
 
     logs = []
-    with open(LOG_FILE, "r") as f:
+    with log_file.open() as f:
         for line in deque(f, maxlen=200):
             try:
                 log = json.loads(line)
@@ -54,8 +48,3 @@ def get_logs():
             logs.append(log)
 
     return jsonify(logs)
-
-@logs_bp.route("/admin/logout")
-def logout():
-    session.clear()
-    return redirect("/admin/auth")

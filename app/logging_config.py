@@ -1,4 +1,9 @@
 from logging.config import dictConfig
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+LOG_DIR = BASE_DIR / "logging" / "logs"
+
 
 def setup_logging():
     dictConfig({

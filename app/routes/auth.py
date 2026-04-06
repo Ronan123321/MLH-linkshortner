@@ -5,10 +5,11 @@ import hashlib
 import json
 from collections import deque
 
-from flask import Blueprint, render_template, redirect, request, jsonify
+from flask import Blueprint, render_template, redirect, request, jsonify, session
 from flask_login import login_user, login_required
 
 from app.models.susers import Susers
+
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -51,14 +52,18 @@ def admin_login():
 
         if verify_creds(user, password):
             login_user(user)
-            return redirect("/admin")
+            return redirect("/admin/logs")
         else:
             return render_template("auth/auth.html", error="Invalide Credentials")
         
     return render_template("auth/auth.html")
         
-@auth_bp.route("/admin")
+@auth_bp.route("/admin/logs")
 @login_required
 def admin_dash():
     return render_template("logs/logs.html")
     
+@auth_bp.route("/admin/logout")
+def logout():
+    session.clear()
+    return redirect("/admin/auth")

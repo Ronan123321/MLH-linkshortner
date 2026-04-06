@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, jsonify
+from flask_login import login_required
 import psutil
 
 metrics_bp = Blueprint("metrics", __name__)
@@ -18,15 +19,13 @@ def get_system_metrics():
     }
 
 @metrics_bp.route("/metrics")
-def metrics_page():
-    # Check if the admin session is set
-    if not session.get("admin"):
-        # Redirect to your existing login page
-        return redirect(url_for("logs.admin_auth"))  # adjust 'logs.admin_auth' to match your blueprint/endpoint name
+@login_required
+def metrics_page():        
     metrics = get_system_metrics()
     return render_template("metrics/metrics.html", metrics=metrics)
 
 
 @metrics_bp.route("/metrics-json")
+@login_required
 def metrics_json():
     return jsonify(get_system_metrics())
