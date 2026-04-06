@@ -4,3 +4,4 @@
 from app.models.events import Events
 from app.models.urls import Urls
 from app.models.users import Users
+from app.models.susers import Susers
