@@ -10,6 +10,7 @@ from app.models.urls import Urls
 from app.models.users import Users
 from app.routes import register_routes
 
+from app.auth.manager import login_manager
 
 def create_app(is_pytest=False):
     load_dotenv()
@@ -18,6 +19,7 @@ def create_app(is_pytest=False):
 
     # Added by ronan for his logs endpoint auth
     app.secret_key = "mylittlesecret"
+    login_manager.init_app(app)
 
     init_db(app)
 
