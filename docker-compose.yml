@@ -54,14 +54,14 @@ services:
 
   web:
     build:
-      context: .
+      context: ./flask_app
       dockerfile: Dockerfile
     expose:
       - "5000"
     env_file:
-      - .env
-    volumes:
-      - .:flask_app/app
+      - ./flask_app/.env
+    #volumes:
+    #  - ./flask_app:/app
     restart: unless-stopped
     environment:
       DATABASE_NAME: ${DATABASE_NAME}

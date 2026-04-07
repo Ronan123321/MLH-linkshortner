@@ -6,5 +6,5 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/app
+      - .:flas_app/app
     command: uv run python run.py
