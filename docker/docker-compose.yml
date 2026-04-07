@@ -61,7 +61,7 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/app
+      - .:flask_app/app
     restart: unless-stopped
     environment:
       DATABASE_NAME: ${DATABASE_NAME}
