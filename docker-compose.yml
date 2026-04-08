@@ -83,6 +83,22 @@ services:
       timeout: 3s
       retries: 10
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+
   load_balancer:
     image: nginx:1.27-alpine
     ports:

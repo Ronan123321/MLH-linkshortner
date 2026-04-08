@@ -8,9 +8,12 @@ from app.models import product
 from app.models.events import Events
 from app.models.urls import Urls
 from app.models.users import Users
+from app.models.susers import Susers
+from app.auth.seed import seed_admin
 from app.routes import register_routes
 
 from app.auth.manager import login_manager
+
 
 def create_app(is_pytest=False):
     load_dotenv()
@@ -20,6 +23,7 @@ def create_app(is_pytest=False):
     # Added by ronan for his logs endpoint auth
     app.secret_key = "mylittlesecret"
     login_manager.init_app(app)
+
 
     init_db(app)
 
@@ -36,7 +40,8 @@ def create_app(is_pytest=False):
     from app import models  # noqa: F401 - registers models with Peewee
 
     if not is_pytest:
-        db.create_tables([Users, Events, Urls], safe=True)
+        db.create_tables([Users, Events, Urls, Susers], safe=True)
+        seed_admin()
 
     register_routes(app)
 

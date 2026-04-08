@@ -149,7 +149,6 @@ def validate_post_format(key, value):
 #--------------------------------------------------------------------
 
 
-
 @events_bp.route("/events", methods=['GET', 'POST'])
 def list_events():
 

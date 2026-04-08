@@ -1,9 +1,28 @@
-from flask import Blueprint, render_template, session, jsonify
+import logging
+logger = logging.getLogger(__name__)
+
+import random
+import time
+
+from flask import Blueprint, render_template, session, jsonify, Response
 from flask_login import login_required
+ 
+
+from prometheus_client import Counter, generate_latest
+
 import psutil
 
 metrics_bp = Blueprint("metrics", __name__)
 
+REQUEST_COUNT = Counter("app_requests_total", "Total requests")
+
+@metrics_bp.before_request
+def count_requests():
+    REQUEST_COUNT.inc()
+
+
+def process_request(t):
+    time.sleep(t)
 
 def get_system_metrics():
     mem = psutil.virtual_memory()
@@ -17,6 +36,11 @@ def get_system_metrics():
         "disk_total": disk.total / (1024**3),
         "disk_percent": disk.percent
     }
+
+@metrics_bp.route("/metrics/prom")
+def metrics_count():
+    return Response(generate_latest(), mimetype="text/plain")
+
 
 @metrics_bp.route("/metrics")
 @login_required
