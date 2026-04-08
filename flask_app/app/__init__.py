@@ -14,6 +14,8 @@ from app.routes import register_routes
 
 from app.auth.manager import login_manager
 
+from prometheus_flask_exporter import PrometheusMetrics
+
 
 def create_app(is_pytest=False):
     load_dotenv()
@@ -23,6 +25,8 @@ def create_app(is_pytest=False):
     # Added by ronan for his logs endpoint auth
     app.secret_key = "mylittlesecret"
     login_manager.init_app(app)
+    # Added by ronan for his metrics
+    metrics = PrometheusMetrics(app)
 
 
     init_db(app)
